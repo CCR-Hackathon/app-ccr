@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Meu amigo caminhoneiro</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="start_recording">Iniciar gravação</string>
+    <string name="stop_recording">Parar gravação</string>
+
+    <string name="start_playing">Reproduzir</string>\
+    <string name="stop_playing">Parar</string>
+
+    <string name="action">Diga o que deseja...</string>
+    <string name="sorry">Desculpe, não entendi.</string>
+    <string name="speech">Use a Google API para solicitar algo.</string>
+</resources>
