@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/backgroundColor"
+    tools:context=".SplashScreenActivity">
+
+    <LinearLayout
+        android:foregroundGravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ccr_logo"/>
+
+        <ImageView
+            android:layout_marginTop="60dp"
+            android:foregroundGravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_meu_amigo_caminhoneiro"/>
+
+        <ImageView
+            android:layout_marginTop="15dp"
+            android:foregroundGravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/meu_amigo_caminhoneiro_description"/>
+
+        <ImageView
+            android:layout_marginTop="100dp"
+            android:foregroundGravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hackathon_ccr"/>
+
+    </LinearLayout>
+</LinearLayout>

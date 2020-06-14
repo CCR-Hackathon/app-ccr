@@ -11,4 +11,19 @@
     <string name="action">Diga o que deseja...</string>
     <string name="sorry">Desculpe, não entendi.</string>
     <string name="speech">Use a Google API para solicitar algo.</string>
+
+
+    <string name="intro_1_title">XXXX</string>
+    <string name="intro_2_title">YYY</string>
+    <string name="intro_3_title">ZZZZ</string>
+
+
+    <string name="intro_1_desc">XXXX</string>
+    <string name="intro_2_desc">YYYY</string>
+    <string name="intro_3_desc">ZZZZ</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>

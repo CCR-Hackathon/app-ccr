@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -34,8 +35,11 @@ import javax.net.ssl.X509TrustManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import br.com.catossi.meu_amigo_caminhoneiro.model.Payload;
+import br.com.catossi.meu_amigo_caminhoneiro.service.APIClient;
 import br.com.catossi.meu_amigo_caminhoneiro.service.APIInterface;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     private final int SPEECH_RECOGNITION_CODE = 1;
@@ -65,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         progress.dismiss();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         speak("");
 
@@ -75,7 +79,13 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             public void run() {
 
                 int min = 0;
-                int max = 7;
+
+
+                String[] phrases = {
+                        "Olá amigo caminhoneiro! Você está dirigindo por 4 horas seguidas. Que tal fazer uma pausa no próximo ponto?"};
+
+
+                int max = phrases.length;
                 if (min >= max) {
                     throw new IllegalArgumentException("max must be greater than min");
                 }
@@ -89,21 +99,26 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
                 lastRandomPhrase = randomPhrase;
 
-                String[] phrases = {
-                        "Você já almoçou hoje? Que tal dar uma paradinha para abastecer e matar a fome?",
-                        "Oi. Está tudo bem? Está meio cansado? Quer parar um pouco para descansar?",
-                        "Ei, não se sinta sozinho, estou aqui para te ajudar no que precisar!",
-                        "Você está a muitas horas dirigindo, que tal dar uma paradinha?",
-                        "O que posso te ajudar hoje, meu amigo caminhoneiro?",
-                        "Ei, que tal parar no próximo posto a 5km e acumular pontos para converter em produtos CCR.",
-                        "Estou preocupado com sua saúde! Você está tomando bastante água, hoje?",
-                        "Olá, você está se sentindo bem?"};
+                speak("" + phrases[0]);
 
-
-                speak("" + phrases[randomPhrase]);
             }
         };
-        timerObj.schedule(timerTaskObj, 1000, 10000);
+
+//        timerObj.schedule(timerTaskObj, 1000, 500000);
+//
+//        Timer verifySpeaking = new Timer();
+//        TimerTask verifySpeakingObj = new TimerTask() {
+//            public void run() {
+//                if(myTTS.isSpeaking() == false) {
+//                    SystemClock.sleep(5000);
+//                    startSpeechToText();
+//                }
+//            }
+//        };
+//
+//        verifySpeaking.schedule(verifySpeakingObj, 8000, 8000);
+
+
     }
 
     private TextToSpeech myTTS;
@@ -127,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private void sayText(String textToSpeak) {
         myTTS.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH,     null);
 
+
     }
 
 
@@ -138,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                     t1.setLanguage(Locale.getDefault());
                 }
             }
+
+
         });
     }
 
@@ -147,7 +165,11 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             t1.shutdown();
         }
         super.onPause();
+
+
     }
+
+
 
     protected void startSpeechToText() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -183,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
                     payload.setText(text);
 
-
                     interact();
                 }
                 break;
@@ -197,68 +218,64 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private Payload payload;
 
     protected void interact() {
-        speak(payload.getText());
-        progress.dismiss();
 
-//        apiService = APIClient.getService().create(APIInterface.class);
-//        callBalance = apiService.postVoice(payload);
-//
-//        Log.e("INIT REQUEST", "" + payload.getText());
-//
-//        try {
-//            getSSLSocketFactory();
-//        }catch (Exception e){
-//            Log.e("ERRO", "" + e);
-//        }
-//        Log.i("Request in API", "" + callBalance.request().url().toString());
-//
-//
-//
-//        callBalance.enqueue(new Callback<Payload>() {
-//            @Override
-//            public void onResponse(Call<Payload> call, Response<Payload> response) {
-//                if (response.raw().code() == 200) {
-//
-//                    Payload payloadResponse = response.body();
-//
-//                    speak(payloadResponse.getOutput());
-//
-//                    payload = payloadResponse;
-//
-//                    Log.e("RESULT REQUEST", payload.getOutput());
-//                    progress.dismiss();
-//                }
-//
-//                Log.e("RESULT REQUEST", "" + response.body());
-//                progress.dismiss();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Payload> call, Throwable t) {
-//                Log.e("BALANCE", t.toString());
-//                progress.dismiss();
-//            }
-//        });
+        apiService = APIClient.getService().create(APIInterface.class);
+        callBalance = apiService.postVoice(payload);
+
+        Log.e("INIT REQUEST", "" + payload.getText());
+
+        try {
+            getSSLSocketFactory();
+        }catch (Exception e){
+            Log.e("ERRO", "" + e);
+        }
+        Log.i("Request in API", "" + callBalance.request().url().toString());
+
+        callBalance.enqueue(new Callback<Payload>() {
+            @Override
+            public void onResponse(Call<Payload> call, Response<Payload> response) {
+                if (response.raw().code() == 200) {
+
+                    Payload payloadResponse = response.body();
+
+                    speak(payloadResponse.getOutput());
+
+                    payload = payloadResponse;
+
+                    Log.e("RESULT REQUEST", payload.getOutput());
+                    progress.dismiss();
+                }
+
+                Log.e("RESULT REQUEST", "" + response.body());
+                progress.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<Payload> call, Throwable t) {
+                Log.e("BALANCE", t.toString());
+                progress.dismiss();
+            }
+        });
     }
 
-//    public SSLSocketFactory getSSLSocketFactory()
-//            throws CertificateException, KeyStoreException, IOException,
-//            NoSuchAlgorithmException, KeyManagementException {
-//        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//        InputStream caInput = getResources().openRawResource(R.raw.cert); // your certificate file
-//        Certificate ca = cf.generateCertificate(caInput);
-//        caInput.close();
-//        KeyStore keyStore = KeyStore.getInstance("BKS");
-//        keyStore.load(null, null);
-//        keyStore.setCertificateEntry("ca", ca);
-//        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-//        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-//        tmf.init(keyStore);
-//        TrustManager[] wrappedTrustManagers = getWrappedTrustManagers(tmf.getTrustManagers());
-//        SSLContext sslContext = SSLContext.getInstance("TLS");
-//        sslContext.init(null, wrappedTrustManagers, null);
-//        return sslContext.getSocketFactory();
-//    }
+    public SSLSocketFactory getSSLSocketFactory()
+            throws CertificateException, KeyStoreException, IOException,
+            NoSuchAlgorithmException, KeyManagementException {
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        InputStream caInput = getResources().openRawResource(R.raw.cert); // your certificate file
+        Certificate ca = cf.generateCertificate(caInput);
+        caInput.close();
+        KeyStore keyStore = KeyStore.getInstance("BKS");
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("ca", ca);
+        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+        tmf.init(keyStore);
+        TrustManager[] wrappedTrustManagers = getWrappedTrustManagers(tmf.getTrustManagers());
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, wrappedTrustManagers, null);
+        return sslContext.getSocketFactory();
+    }
 
     private TrustManager[] getWrappedTrustManagers(TrustManager[] trustManagers) {
         final X509TrustManager originalTrustManager = (X509TrustManager) trustManagers[0];
